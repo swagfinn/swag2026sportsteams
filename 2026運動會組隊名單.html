@@ -2,10 +2,12 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>體能之巔 — 第二屆運動會 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
+  /* ── Fonts: self-contained fallback chain, no external requests ── */
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
   :root {
     --bg: #0a0a0f;
     --surface: #111118;
@@ -24,9 +26,11 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Noto Sans TC', sans-serif;
+    font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'Heiti TC', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   /* Background grid */
@@ -64,7 +68,7 @@
   }
 
   .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
     font-size: clamp(64px, 14vw, 130px);
     line-height: 0.9;
     letter-spacing: 2px;
@@ -97,7 +101,7 @@
   }
 
   .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
     font-size: 42px;
     color: var(--accent);
     line-height: 1;
@@ -193,7 +197,7 @@
     position: absolute;
     top: -10px;
     right: -8px;
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
     font-size: 100px;
     color: rgba(255,255,255,0.03);
     line-height: 1;
@@ -212,7 +216,7 @@
   }
 
   .team-number {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
     font-size: 13px;
     color: #000;
     background: var(--accent);
@@ -246,7 +250,7 @@
   .meta-female { color: var(--female); }
 
   .total-badge {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
     font-size: 22px;
     color: var(--accent);
     line-height: 1;
@@ -352,10 +356,31 @@
     text-transform: uppercase;
   }
 
-  /* Responsive */
+  /* ── Responsive ── */
   @media (max-width: 640px) {
-    .grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
-    .hero-stats { gap: 24px; }
+    .hero { padding: 48px 16px 32px; }
+    .hero-stats { gap: 16px; }
+    .stat-num { font-size: 32px; }
+    .stat-label { font-size: 10px; }
+    .grid { grid-template-columns: 1fr; padding: 0 12px 60px; gap: 14px; }
+    .member-name { min-width: 90px; font-size: 12px; }
+    .dept-tag { font-size: 9px; padding: 2px 6px; }
+    .card-header { padding: 14px 14px 10px; }
+    .member-row { padding: 6px 14px; }
+    .hero-subtitle { font-size: 11px; letter-spacing: 1px; }
+    .legend { gap: 12px; }
+    .section-divider { margin: 0 12px 24px; }
+  }
+
+  @media (max-width: 380px) {
+    .hero-stats { gap: 10px; }
+    .stat-num { font-size: 28px; }
+    .member-name { min-width: 80px; }
+  }
+
+  /* touch device — disable emoji cursor */
+  @media (hover: none) {
+    #emojiCursor { display: none !important; }
   }
 
   /* Hero title click hint */
@@ -722,33 +747,33 @@
 <!-- ── Modals ── -->
 
 <!-- Gender modal -->
-<div id="genderModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);overflow-y:auto;">
-  <div style="max-width:520px;margin:60px auto;background:#16161f;border:1px solid rgba(255,255,255,0.08);position:relative;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+<div id="genderModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="max-width:520px;margin:40px auto 40px;background:#16161f;border:1px solid rgba(255,255,255,0.08);position:relative;margin-left:max(16px,auto);margin-right:max(16px,auto);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:#16161f;z-index:1;">
       <div style="display:flex;align-items:center;gap:10px;">
         <div id="genderModalDot" style="width:8px;height:8px;border-radius:50%;"></div>
         <span id="genderModalTitle" style="font-size:14px;font-weight:700;letter-spacing:1px;"></span>
       </div>
-      <button onclick="document.getElementById('genderModal').style.display='none'" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;">×</button>
+      <button onclick="document.getElementById('genderModal').style.display='none'" style="background:none;border:none;color:#666;font-size:24px;cursor:pointer;line-height:1;padding:4px 8px;touch-action:manipulation;">×</button>
     </div>
     <div id="genderModalList" style="padding:8px 0 12px;"></div>
   </div>
 </div>
 
 <!-- YouTube modal -->
-<div id="ytModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
-  <div style="background:#16161f;border:1px solid rgba(255,255,255,0.08);width:min(560px,92vw);position:relative;">
+<div id="ytModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#16161f;border:1px solid rgba(255,255,255,0.08);width:min(560px,100%);position:relative;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
       <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#f0f0f0;">🎬 播放影片</span>
-      <button id="ytCloseBtn" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;">×</button>
+      <button id="ytCloseBtn" style="background:none;border:none;color:#666;font-size:24px;cursor:pointer;line-height:1;padding:4px 8px;touch-action:manipulation;">×</button>
     </div>
     <div style="padding:20px 20px 10px;font-size:13px;color:#aaa;line-height:1.7;">
       確定要前往 YouTube 播放<br>
       <span style="color:var(--accent);font-weight:600;">體能之巔 · 第二屆運動會</span> 主題影片嗎？
     </div>
     <div style="display:flex;gap:10px;padding:12px 20px 20px;justify-content:flex-end;">
-      <button id="ytCancelBtn" style="padding:8px 20px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:#888;font-size:12px;cursor:pointer;font-family:inherit;">取消</button>
-      <button id="ytConfirmBtn" style="padding:8px 24px;background:var(--accent);border:none;color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);">▶ 立即播放</button>
+      <button id="ytCancelBtn" style="padding:10px 20px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:#888;font-size:12px;cursor:pointer;font-family:inherit;touch-action:manipulation;">取消</button>
+      <button id="ytConfirmBtn" style="padding:10px 24px;background:var(--accent);border:none;color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);touch-action:manipulation;">▶ 立即播放</button>
     </div>
   </div>
 </div>
@@ -832,21 +857,19 @@
   });
 
   // ── YouTube modal ──
-  document.getElementById('heroTitle').addEventListener('click', () => {
-    document.getElementById('ytModal').style.display = 'flex';
-  });
-  document.getElementById('ytCloseBtn').addEventListener('click', () => {
-    document.getElementById('ytModal').style.display = 'none';
-  });
-  document.getElementById('ytCancelBtn').addEventListener('click', () => {
-    document.getElementById('ytModal').style.display = 'none';
-  });
+  function openYtModal() { document.getElementById('ytModal').style.display = 'flex'; }
+  function closeYtModal() { document.getElementById('ytModal').style.display = 'none'; }
+
+  document.getElementById('heroTitle').addEventListener('click', openYtModal);
+  document.getElementById('heroTitle').addEventListener('touchend', (e) => { e.preventDefault(); openYtModal(); });
+  document.getElementById('ytCloseBtn').addEventListener('click', closeYtModal);
+  document.getElementById('ytCancelBtn').addEventListener('click', closeYtModal);
   document.getElementById('ytConfirmBtn').addEventListener('click', () => {
     window.open(YT_URL, '_blank');
-    document.getElementById('ytModal').style.display = 'none';
+    closeYtModal();
   });
   document.getElementById('ytModal').addEventListener('click', function(e) {
-    if (e.target === this) this.style.display = 'none';
+    if (e.target === this) closeYtModal();
   });
 
   // ── cursor hint on hover ──
