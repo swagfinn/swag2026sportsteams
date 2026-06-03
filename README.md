@@ -1,1 +1,861 @@
-# swag2026sportsteams
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>體能之巔 — 第二屆運動會 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: rgba(255,255,255,0.06);
+    --accent: #e8ff00;
+    --accent2: #ff3c5f;
+    --text: #f0f0f0;
+    --muted: #666;
+    --male: #4da8ff;
+    --female: #ff82b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,255,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,0,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 72px 24px 48px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 5px 16px;
+    margin-bottom: 20px;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 14vw, 130px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  .hero-title span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-subtitle {
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* Filter tabs */
+  .filter-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 24px 40px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 7px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  /* Grid */
+  .grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Team card */
+  .team-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .team-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,255,0,0.25);
+  }
+
+  .team-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .team-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Team number watermark */
+  .team-watermark {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Card header */
+  .card-header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+  }
+
+  .team-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    color: #000;
+    background: var(--accent);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  }
+
+  .team-info { flex: 1; }
+
+  .team-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .team-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .meta-male { color: var(--male); }
+  .meta-female { color: var(--female); }
+
+  .total-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  /* Member list */
+  .member-list {
+    padding: 12px 0;
+  }
+
+  .member-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    transition: background 0.15s;
+    cursor: default;
+  }
+
+  .member-row:hover {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .gender-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .gender-dot.male { background: var(--male); }
+  .gender-dot.female { background: var(--female); }
+
+  .member-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+
+  .member-dept {
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+    text-align: right;
+  }
+
+  .dept-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #aaa;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    padding: 0 24px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* Divider */
+  .section-divider {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider-text {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
+    .hero-stats { gap: 24px; }
+  }
+
+  /* Hero title click hint */
+  #heroTitle {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  #heroTitle:hover {
+    opacity: 0.85;
+  }
+
+  /* Emoji cursor follower */
+  #emojiCursor {
+    position: fixed;
+    pointer-events: none;
+    font-size: 28px;
+    z-index: 9999;
+    transform: translate(10px, 10px);
+    display: none;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    animation: bounce 0.5s infinite alternate ease-in-out;
+  }
+
+  @keyframes bounce {
+    from { transform: translate(10px, 10px); }
+    to   { transform: translate(10px, 18px); }
+  }
+
+  /* Stagger animation */
+  .team-card:nth-child(1) { animation-delay: 0.05s; }
+  .team-card:nth-child(2) { animation-delay: 0.10s; }
+  .team-card:nth-child(3) { animation-delay: 0.15s; }
+  .team-card:nth-child(4) { animation-delay: 0.20s; }
+  .team-card:nth-child(5) { animation-delay: 0.25s; }
+  .team-card:nth-child(6) { animation-delay: 0.30s; }
+  .team-card:nth-child(7) { animation-delay: 0.35s; }
+  .team-card:nth-child(8) { animation-delay: 0.40s; }
+  .team-card:nth-child(9) { animation-delay: 0.45s; }
+  .team-card:nth-child(10) { animation-delay: 0.50s; }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div id="emojiCursor">🏃</div>
+  <div class="hero-badge">第二屆運動會 · June 2026</div>
+  <h1 class="hero-title" id="heroTitle">體能<span>之巔</span></h1>
+  <p class="hero-subtitle">PEAK PERFORMANCE · TEAM ROSTER</p>
+  <div class="hero-stats">
+    <div class="stat" id="statTeams" style="cursor:pointer">
+      <div class="stat-num">10</div>
+      <div class="stat-label">支隊伍</div>
+    </div>
+    <div class="stat" id="statTotal" style="cursor:pointer">
+      <div class="stat-num">102</div>
+      <div class="stat-label">位參賽者</div>
+    </div>
+    <div class="stat" id="statMale" style="cursor:pointer">
+      <div class="stat-num" style="color:var(--male)">63</div>
+      <div class="stat-label">男性</div>
+    </div>
+    <div class="stat" id="statFemale" style="cursor:pointer">
+      <div class="stat-num" style="color:var(--female)">39</div>
+      <div class="stat-label">女性</div>
+    </div>
+  </div>
+</section>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--male)"></div>男性</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--female)"></div>女性</div>
+</div>
+
+<div class="section-divider">
+  <span class="divider-text">All Teams</span>
+</div>
+
+<div class="grid" id="teamsGrid">
+
+  <!-- Team 1 -->
+  <div class="team-card">
+    <div class="team-watermark">1</div>
+    <div class="card-header">
+      <div class="team-number">01</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 1</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 7</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">11</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Sam Liu</div><div class="member-dept"><span class="dept-tag">CEO</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Albert Chiu</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jason Lee</div><div class="member-dept"><span class="dept-tag">R&D_QA</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Arthur Zhan</div><div class="member-dept"><span class="dept-tag">R&D_DevOps</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Yukai Chen</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Roy Gu</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jed Lu</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Lynn Chen</div><div class="member-dept"><span class="dept-tag">Executive Office_Admin & HR & Project-Bar</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Bogi Chang</div><div class="member-dept"><span class="dept-tag">Design & Product</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Fin Chang</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Nancy Hsieh</div><div class="member-dept"><span class="dept-tag">Executive Office_HR</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 2 -->
+  <div class="team-card">
+    <div class="team-watermark">2</div>
+    <div class="card-header">
+      <div class="team-number">02</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 2</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 7</span>
+          <span class="meta-female">♀ 3</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Allen Hsieh</div><div class="member-dept"><span class="dept-tag">R&D_QA</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Henry Lin</div><div class="member-dept"><span class="dept-tag">Project-Marketing Promotion</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Mark Chen</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Cody Yu</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Andy Hsu</div><div class="member-dept"><span class="dept-tag">R&D_DevOps</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Chun Yu Hsieh</div><div class="member-dept"><span class="dept-tag">Marketing & Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Charles Chien</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Teresa Yang</div><div class="member-dept"><span class="dept-tag">Executive Office_PR</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Roxanne Hsu</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Adalyn Wu</div><div class="member-dept"><span class="dept-tag">R&D_QA</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 3 -->
+  <div class="team-card">
+    <div class="team-watermark">3</div>
+    <div class="card-header">
+      <div class="team-number">03</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 3</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Guanmin Liao</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Eason Tsai</div><div class="member-dept"><span class="dept-tag">Product</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Bear Hsu</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Nick Weng</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Mike Yu</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Matt Hsiao</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Suyu Chen</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Anita Huang</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Nana Ho</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Joyce Lin</div><div class="member-dept"><span class="dept-tag">Finance</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 4 -->
+  <div class="team-card">
+    <div class="team-watermark">4</div>
+    <div class="card-header">
+      <div class="team-number">04</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 4</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 7</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">11</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Andy Yu</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Bing Yang Chen</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Nat Chang</div><div class="member-dept"><span class="dept-tag">E-Commerce</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jeff Chan</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Victor Cheng</div><div class="member-dept"><span class="dept-tag">E-Commerce</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Kenny Hung</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Auston Tseng</div><div class="member-dept"><span class="dept-tag">R&D_Data</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Eva Chang</div><div class="member-dept"><span class="dept-tag">Executive Office_Admin</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Jillie Shen</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Hsi Wang</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Kiki Chu</div><div class="member-dept"><span class="dept-tag">Finance</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 5 -->
+  <div class="team-card">
+    <div class="team-watermark">5</div>
+    <div class="card-header">
+      <div class="team-number">05</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 5</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jacky Huang</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Wei Hsin Wang</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Derek Tsai</div><div class="member-dept"><span class="dept-tag">Product</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Wayne Wen</div><div class="member-dept"><span class="dept-tag">R&D_Data</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Ken Lee</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Anderson Chen</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Alice Wu</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Lily Wang</div><div class="member-dept"><span class="dept-tag">Finance & Project-Bar</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Harumi Hu</div><div class="member-dept"><span class="dept-tag">Executive Office_Admin</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Crystal Chang</div><div class="member-dept"><span class="dept-tag">Design</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 6 -->
+  <div class="team-card">
+    <div class="team-watermark">6</div>
+    <div class="card-header">
+      <div class="team-number">06</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 6</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Bill Hsiao</div><div class="member-dept"><span class="dept-tag">R&D</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Martin Yu</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Eddie Shen</div><div class="member-dept"><span class="dept-tag">Product</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jerry Chuang</div><div class="member-dept"><span class="dept-tag">R&D_DevOps</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jerry Wang</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">John Lu</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Alice Tu</div><div class="member-dept"><span class="dept-tag">QA</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Pot Chen</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Tina Hsu</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Cody Hsu</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 7 -->
+  <div class="team-card">
+    <div class="team-watermark">7</div>
+    <div class="card-header">
+      <div class="team-number">07</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 7</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Joe Chun</div><div class="member-dept"><span class="dept-tag">Design</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Marcus Tsai</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jason Lin</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">MM Cheng</div><div class="member-dept"><span class="dept-tag">R&D_QA</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Lemon Lin</div><div class="member-dept"><span class="dept-tag">User Operation & Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Home Liu</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Vivi Li</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Luna Yu</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Verona Wu</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Hsin Tzu Yu</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 8 -->
+  <div class="team-card">
+    <div class="team-watermark">8</div>
+    <div class="card-header">
+      <div class="team-number">08</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 8</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jay Chen</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Kelvin Loh</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Max Huang</div><div class="member-dept"><span class="dept-tag">R&D_Data</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Aaron Kuo</div><div class="member-dept"><span class="dept-tag">Product</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Tim Wei</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">William Ho</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Mai Mai</div><div class="member-dept"><span class="dept-tag">Design</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Abby Lin</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Christine Lin</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Angel Lin</div><div class="member-dept"><span class="dept-tag">我的預算</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 9 -->
+  <div class="team-card">
+    <div class="team-watermark">9</div>
+    <div class="card-header">
+      <div class="team-number">09</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 9</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Tristan Liao</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Kokuyo Lin</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Arjun Chen</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Tsi Ho Lim</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Jason Yeh</div><div class="member-dept"><span class="dept-tag">R&D_Data</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Zih Hao Yang</div><div class="member-dept"><span class="dept-tag">R&D_Backend</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Elly Gau</div><div class="member-dept"><span class="dept-tag">Marketing</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Eleanor Wang</div><div class="member-dept"><span class="dept-tag">Creator</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Angie Hsieh</div><div class="member-dept"><span class="dept-tag">Design</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Silvia Lai</div><div class="member-dept"><span class="dept-tag">Customer Success</span></div></div>
+    </div>
+  </div>
+
+  <!-- Team 10 -->
+  <div class="team-card">
+    <div class="team-watermark">10</div>
+    <div class="card-header">
+      <div class="team-number">10</div>
+      <div class="team-info">
+        <div class="team-name">隊伍 10</div>
+        <div class="team-meta">
+          <span class="meta-male">♂ 6</span>
+          <span class="meta-female">♀ 4</span>
+        </div>
+      </div>
+      <div class="total-badge">10</div>
+    </div>
+    <div class="member-list">
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Nick Kuo</div><div class="member-dept"><span class="dept-tag">R&D_DevOps</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Ciao Chiang</div><div class="member-dept"><span class="dept-tag">R&D_Mobile</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Anderson Chung</div><div class="member-dept"><span class="dept-tag">R&D_Data</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Eric Li</div><div class="member-dept"><span class="dept-tag">User Operation</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Charlie Wang</div><div class="member-dept"><span class="dept-tag">R&D_Frontend</span></div></div>
+      <div class="member-row"><div class="gender-dot male"></div><div class="member-name">Taco Hsu</div><div class="member-dept"><span class="dept-tag">R&D_QA</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Angela Lee</div><div class="member-dept"><span class="dept-tag">Executive Office_HR</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Mila Wu</div><div class="member-dept"><span class="dept-tag">Finance</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Amy Huang</div><div class="member-dept"><span class="dept-tag">Project-Film Set</span></div></div>
+      <div class="member-row"><div class="gender-dot female"></div><div class="member-name">Zooey Shao</div><div class="member-dept"><span class="dept-tag">Product</span></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Modals ── -->
+
+<!-- Gender modal -->
+<div id="genderModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);overflow-y:auto;">
+  <div style="max-width:520px;margin:60px auto;background:#16161f;border:1px solid rgba(255,255,255,0.08);position:relative;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="genderModalDot" style="width:8px;height:8px;border-radius:50%;"></div>
+        <span id="genderModalTitle" style="font-size:14px;font-weight:700;letter-spacing:1px;"></span>
+      </div>
+      <button onclick="document.getElementById('genderModal').style.display='none'" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div id="genderModalList" style="padding:8px 0 12px;"></div>
+  </div>
+</div>
+
+<!-- YouTube modal -->
+<div id="ytModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+  <div style="background:#16161f;border:1px solid rgba(255,255,255,0.08);width:min(560px,92vw);position:relative;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#f0f0f0;">🎬 播放影片</span>
+      <button id="ytCloseBtn" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div style="padding:20px 20px 10px;font-size:13px;color:#aaa;line-height:1.7;">
+      確定要前往 YouTube 播放<br>
+      <span style="color:var(--accent);font-weight:600;">體能之巔 · 第二屆運動會</span> 主題影片嗎？
+    </div>
+    <div style="display:flex;gap:10px;padding:12px 20px 20px;justify-content:flex-end;">
+      <button id="ytCancelBtn" style="padding:8px 20px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:#888;font-size:12px;cursor:pointer;font-family:inherit;">取消</button>
+      <button id="ytConfirmBtn" style="padding:8px 24px;background:var(--accent);border:none;color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);">▶ 立即播放</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const YT_URL = 'https://youtu.be/ogyx6-QNL7A?si=ECUpcy5fFWRmUhUt&t=6';
+
+  // ── collect members ──
+  function getMembers(gender) {
+    const rows = document.querySelectorAll('.member-row');
+    const result = [];
+    rows.forEach(row => {
+      const dot = row.querySelector('.gender-dot');
+      if (!dot) return;
+      if (gender === 'male' && !dot.classList.contains('male')) return;
+      if (gender === 'female' && !dot.classList.contains('female')) return;
+      const name = row.querySelector('.member-name')?.textContent.trim() || '';
+      const dept = row.querySelector('.dept-tag')?.textContent.trim() || '';
+      // find team number from ancestor
+      const card = row.closest('.team-card');
+      const teamNum = card?.querySelector('.team-number')?.textContent.trim() || '';
+      result.push({ name, dept, teamNum });
+    });
+    return result.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // ── render gender modal ──
+  function openGenderModal(gender) {
+    const members = getMembers(gender);
+    const isMale = gender === 'male';
+    const color = isMale ? 'var(--male)' : 'var(--female)';
+    const label = isMale ? `男性 · ${members.length} 人` : `女性 · ${members.length} 人`;
+
+    document.getElementById('genderModalDot').style.background = color;
+    document.getElementById('genderModalTitle').textContent = label;
+    document.getElementById('genderModalTitle').style.color = color;
+
+    const listEl = document.getElementById('genderModalList');
+    listEl.innerHTML = members.map(m => `
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 20px;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <div style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0;"></div>
+        <span style="font-size:13px;font-weight:500;min-width:110px;flex-shrink:0;">${m.name}</span>
+        <span style="font-size:10px;color:#555;margin-right:auto;">隊伍 ${m.teamNum}</span>
+        <span style="font-size:10px;padding:2px 8px;border:1px solid rgba(255,255,255,0.08);color:#888;">${m.dept}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('genderModal').style.display = 'block';
+  }
+
+  // ── stat clicks ──
+  document.getElementById('statMale').addEventListener('click', () => openGenderModal('male'));
+  document.getElementById('statFemale').addEventListener('click', () => openGenderModal('female'));
+  document.getElementById('statTeams').addEventListener('click', () => {
+    document.getElementById('teamsGrid').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('statTotal').addEventListener('click', () => {
+    document.getElementById('teamsGrid').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ── close gender modal on backdrop ──
+  document.getElementById('genderModal').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+
+  // ── Emoji cursor on hero title ──
+  const emojiCursor = document.getElementById('emojiCursor');
+  const heroTitle = document.getElementById('heroTitle');
+
+  heroTitle.addEventListener('mouseenter', () => {
+    emojiCursor.style.display = 'block';
+    heroTitle.style.cursor = 'none';
+  });
+  heroTitle.addEventListener('mouseleave', () => {
+    emojiCursor.style.display = 'none';
+    heroTitle.style.cursor = 'pointer';
+  });
+  heroTitle.addEventListener('mousemove', (e) => {
+    emojiCursor.style.left = e.clientX + 'px';
+    emojiCursor.style.top  = e.clientY + 'px';
+  });
+
+  // ── YouTube modal ──
+  document.getElementById('heroTitle').addEventListener('click', () => {
+    document.getElementById('ytModal').style.display = 'flex';
+  });
+  document.getElementById('ytCloseBtn').addEventListener('click', () => {
+    document.getElementById('ytModal').style.display = 'none';
+  });
+  document.getElementById('ytCancelBtn').addEventListener('click', () => {
+    document.getElementById('ytModal').style.display = 'none';
+  });
+  document.getElementById('ytConfirmBtn').addEventListener('click', () => {
+    window.open(YT_URL, '_blank');
+    document.getElementById('ytModal').style.display = 'none';
+  });
+  document.getElementById('ytModal').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+
+  // ── cursor hint on hover ──
+  ['statMale','statFemale','statTeams','statTotal'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('mouseenter', () => el.style.opacity = '0.75');
+    el.addEventListener('mouseleave', () => el.style.opacity = '1');
+  });
+</script>
+
+</body>
+</html>
